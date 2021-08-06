@@ -1,26 +1,21 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { Provider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { Provider as StoreProvider } from 'react-redux';
 import 'reflect-metadata';
-import { StatusBar } from 'expo-status-bar';
 
-import Header from './components/Header';
+import { createStore } from 'redux';
+import { rootReducer } from './store';
+import Main from './components/Main';
+
+const store = createStore(rootReducer);
 
 const App: React.FC = () => {
-    React.useEffect(() => {
-        (async () => {
-            const response = await fetch(
-                'http://mobile-dev.oblakogroup.ru/candidate/RyslanYhlin/list',
-            );
-            const date = await response.json();
-        })();
-    }, []);
-
     return (
-        <Provider>
-            <Header />
-            <StatusBar style="auto" />
-        </Provider>
+        <StoreProvider store={store}>
+            <PaperProvider>
+                <Main />
+            </PaperProvider>
+        </StoreProvider>
     );
 };
 
