@@ -6,6 +6,7 @@ import Accordion from './Accordion';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../Navigate';
+import { Todo } from '../types/todoReducer';
 
 interface props {
     category: StateModel;
@@ -13,7 +14,10 @@ interface props {
 
 const CategoryItem: React.FC<props> = ({ category }) => {
     const [enabled, setEnabled] = React.useState<boolean>(false);
-    const completedTodos = category.todos.filter((todo) => todo.checked === true);
+    let completedTodos: Todo[] | undefined;
+    if (category.todos) {
+        completedTodos = category.todos.filter((todo) => todo.checked === true);
+    }
 
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -44,39 +48,54 @@ const CategoryItem: React.FC<props> = ({ category }) => {
 
     return (
         <List.Section title={category.title}>
-            {category.todos.map((todo) =>
-                !todo.checked ? (
-                    <Swipeable
-                        key={todo.id}
-                        renderRightActions={rightSwipe}
-                        renderLeftActions={leftSwipe}>
-                        <List.Item
-                            title={todo.text}
-                            left={(props) => (
-                                <List.Icon {...props} icon="checkbox-blank-circle-outline" />
-                            )}
-                        />
-                    </Swipeable>
-                ) : null,
+            {category.todos ? (
+                <>
+                    {category.todos.map((todo) =>
+                        !todo.checked ? (
+                            <Swipeable
+                                key={todo.id}
+                                renderRightActions={rightSwipe}
+                                renderLeftActions={leftSwipe}>
+                                <List.Item
+                                    title={todo.text}
+                                    left={(props) => (
+                                        <List.Icon
+                                            {...props}
+                                            icon="checkbox-blank-circle-outline"
+                                        />
+                                    )}
+                                />
+                            </Swipeable>
+                        ) : null,
+                    )}
+                    {completedTodos!.length !== 0 ? (
+                        <Accordion enabled={enabled} setEnabled={setEnabled} />
+                    ) : null}
+                    {enabled
+                        ? completedTodos?.map((completedTodo) => (
+                              <Swipeable
+                                  key={completedTodo.id}
+                                  renderRightActions={rightSwipe}
+                                  renderLeftActions={leftSwipe}>
+                                  <List.Item
+                                      title={
+                                          <Text style={styles.pomplited}>{completedTodo.text}</Text>
+                                      }
+                                      left={(props) => (
+                                          <List.Icon
+                                              {...props}
+                                              color={Colors.blue500}
+                                              icon="check"
+                                          />
+                                      )}
+                                  />
+                              </Swipeable>
+                          ))
+                        : null}
+                </>
+            ) : (
+                <Text style={styles.emptyTitleList}>Список Пуст</Text>
             )}
-            {completedTodos.length !== 0 ? (
-                <Accordion enabled={enabled} setEnabled={setEnabled} />
-            ) : null}
-            {enabled
-                ? completedTodos.map((completedTodo) => (
-                      <Swipeable
-                          key={completedTodo.id}
-                          renderRightActions={rightSwipe}
-                          renderLeftActions={leftSwipe}>
-                          <List.Item
-                              title={<Text style={styles.pomplited}>{completedTodo.text}</Text>}
-                              left={(props) => (
-                                  <List.Icon {...props} color={Colors.blue500} icon="check" />
-                              )}
-                          />
-                      </Swipeable>
-                  ))
-                : null}
         </List.Section>
     );
 };
@@ -99,6 +118,12 @@ const styles = StyleSheet.create({
         width: 80,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    emptyTitleList: {
+        fontSize: 16,
+        marginLeft: 30,
+        paddingVertical: 5,
+        color: Colors.red500,
     },
 });
 

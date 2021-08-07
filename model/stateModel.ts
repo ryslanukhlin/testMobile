@@ -6,5 +6,5 @@ export class StateModel {
     candidate_id!: number;
     created_at!: string;
     updated_at!: string;
-    todos!: Todo[];
+    todos?: Todo[];
 }

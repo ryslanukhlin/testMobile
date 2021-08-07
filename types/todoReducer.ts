@@ -10,7 +10,7 @@ export interface todoCategory {
     candidate_id?: number;
     created_at: string;
     updated_at: string;
-    todos: Todo[];
+    todos?: Todo[];
 }
 
 export interface Todo {
@@ -24,6 +24,8 @@ export interface Todo {
 
 export enum TodoEnumAction {
     SET_TODOS = 'SET_TODOS',
+    CREATE_LIST = 'CREATE_LIST',
+    DELETE_LIST = 'DELETE_LIST',
 }
 
 export type TSetTodo = {
@@ -31,4 +33,14 @@ export type TSetTodo = {
     payload: StateModel[];
 };
 
-export type TRegisterAction = TSetTodo;
+export type TCreateList = {
+    type: TodoEnumAction.CREATE_LIST;
+    payload: StateModel;
+};
+
+export type TDeleteList = {
+    type: TodoEnumAction.DELETE_LIST;
+    payload: number;
+};
+
+export type TRegisterAction = TSetTodo | TCreateList | TDeleteList;
