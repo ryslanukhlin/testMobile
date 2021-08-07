@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import { Appbar } from 'react-native-paper';
 
-const Header = () => {
+import { useTypeDispatch } from '../hooks/useTypedDispatch';
+
+const Header: React.FC = () => {
+    const { openModel } = useTypeDispatch();
+
     return (
         <Appbar.Header style={{ backgroundColor: 'white' }}>
             <Appbar.Content title="Задачи" />
-            <Appbar.Action icon="shape-outline" onPress={() => {}} />
+            <Appbar.Action icon="shape-outline" onPress={openModel} />
         </Appbar.Header>
     );
 };

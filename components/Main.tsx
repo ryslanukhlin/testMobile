@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StateModel } from '../model/stateModel';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import Category from './Category';
+import ModalCustom from './Model';
 
 const Main: React.FC = () => {
     const { setTodos } = useTypeDispatch();
@@ -25,6 +26,7 @@ const Main: React.FC = () => {
         <>
             <Header />
             <Category />
+            <ModalCustom />
             <StatusBar style="auto" />
         </>
     );
