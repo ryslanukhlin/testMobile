@@ -1,10 +1,10 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { Text } from 'react-native';
-import { IconButton } from 'react-native-paper';
-import Main from './components/Main';
+import { IconButton, Colors } from 'react-native-paper';
+import Main from './pages/Main';
 import { useTypeDispatch } from './hooks/useTypedDispatch';
+import EditorTodo from './pages/EditorTodo';
 
 export type RootStackParamList = {
     Main: undefined;
@@ -27,7 +27,14 @@ const Navigate = () => {
                         headerRight: () => <IconButton icon="shape-outline" onPress={openModel} />,
                     }}
                 />
-                <Stack.Screen name="EditorTodo" component={() => <Text>editor todo</Text>} />
+                <Stack.Screen
+                    name="EditorTodo"
+                    component={EditorTodo}
+                    options={{
+                        title: '',
+                        headerRight: () => <IconButton icon="check" color={Colors.blue500} />,
+                    }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );

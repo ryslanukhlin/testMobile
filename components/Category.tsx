@@ -7,10 +7,14 @@ const Category: React.FC = () => {
     const categores = useTypedSelector((state) => state.todo.state);
 
     return (
-        <FlatList
-            data={categores}
-            renderItem={({ item }) => <CategoryItem key={item.id} category={item} />}
-        />
+        <>
+            <FlatList
+                style={{ zIndex: 1 }}
+                data={categores}
+                renderItem={({ item }) => <CategoryItem category={item} />}
+                keyExtractor={(item) => String(item.id)}
+            />
+        </>
     );
 };
 
