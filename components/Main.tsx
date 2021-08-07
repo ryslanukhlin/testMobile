@@ -1,14 +1,22 @@
 import React from 'react';
 import { plainToClass } from 'class-transformer';
-
-import Header from '../components/Header';
 import { StatusBar } from 'expo-status-bar';
 import { StateModel } from '../model/stateModel';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import Category from './Category';
 import ModalCustom from './Model';
+import { Button } from 'react-native-paper';
 
-const Main: React.FC = () => {
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../Navigate';
+
+type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
+
+type Props = {
+    navigation: ProfileScreenNavigationProp;
+};
+
+const Main: React.FC<Props> = ({ navigation }) => {
     const { setTodos } = useTypeDispatch();
 
     React.useLayoutEffect(() => {
@@ -24,7 +32,6 @@ const Main: React.FC = () => {
 
     return (
         <>
-            <Header />
             <Category />
             <ModalCustom />
             <StatusBar style="auto" />

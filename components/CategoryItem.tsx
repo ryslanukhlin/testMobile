@@ -4,6 +4,8 @@ import { Colors, List, IconButton } from 'react-native-paper';
 import { StateModel } from '../model/stateModel';
 import Accordion from './Accordion';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../Navigate';
 
 interface props {
     category: StateModel;
@@ -13,13 +15,15 @@ const CategoryItem: React.FC<props> = ({ category }) => {
     const [enabled, setEnabled] = React.useState<boolean>(false);
     const completedTodos = category.todos.filter((todo) => todo.checked === true);
 
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
     const leftSwipe = () => {
         return (
             <View style={styles.editingSwiper}>
                 <IconButton
                     icon="pencil-outline"
                     size={22}
-                    onPress={() => console.log('Pressed')}
+                    onPress={() => navigation.navigate('EditorTodo')}
                 />
             </View>
         );

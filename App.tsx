@@ -5,7 +5,7 @@ import 'reflect-metadata';
 import { createStore } from 'redux';
 import { rootReducer } from './store';
 
-import Main from './components/Main';
+import Navigate from './Navigate';
 
 const store = createStore(rootReducer);
 
@@ -13,7 +13,7 @@ const App: React.FC = () => {
     return (
         <StoreProvider store={store}>
             <PaperProvider>
-                <Main />
+                <Navigate />
             </PaperProvider>
         </StoreProvider>
     );
