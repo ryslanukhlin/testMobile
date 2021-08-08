@@ -31,13 +31,15 @@ const CategoryItem: React.FC<props> = ({ category }) => {
         deleteTodo(payload);
     };
 
-    const leftSwipe = () => {
+    const editListItem = (todo: Todo) => navigation.navigate('EditorTodo', { todo });
+
+    const leftSwipe = (todo: Todo) => {
         return (
             <View style={styles.editingSwiper}>
                 <IconButton
                     icon="pencil-outline"
                     size={22}
-                    onPress={() => navigation.navigate('EditorTodo')}
+                    onPress={editListItem.bind(null, todo)}
                 />
             </View>
         );
@@ -65,7 +67,7 @@ const CategoryItem: React.FC<props> = ({ category }) => {
                             <Swipeable
                                 key={todo.id}
                                 renderRightActions={rightSwipe.bind(null, todo)}
-                                renderLeftActions={leftSwipe}>
+                                renderLeftActions={leftSwipe.bind(null, todo)}>
                                 <List.Item
                                     title={todo.text}
                                     left={(props) => (
@@ -86,7 +88,7 @@ const CategoryItem: React.FC<props> = ({ category }) => {
                               <Swipeable
                                   key={completedTodo.id}
                                   renderRightActions={rightSwipe.bind(null, completedTodo)}
-                                  renderLeftActions={leftSwipe}>
+                                  renderLeftActions={leftSwipe.bind(null, completedTodo)}>
                                   <List.Item
                                       title={
                                           <Text style={styles.pomplited}>{completedTodo.text}</Text>

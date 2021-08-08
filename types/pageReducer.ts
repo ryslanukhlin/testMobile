@@ -1,7 +1,10 @@
+import { Todo } from './todoReducer';
+
 export interface todoState {
     modalVisibale: boolean;
     todoTextInput: string;
     valueRaduo?: number;
+    editTodo: Todo | null;
 }
 
 export enum pageEnumAction {
@@ -9,6 +12,7 @@ export enum pageEnumAction {
     CLOSE_MODEL = 'CLOSE_MODEL',
     CHANGE_TODO_TEXT_INPUT = 'CHANGE_TODO_TEXT_INPUT',
     CHANGE_VALUE_RADIO = 'CHANGE_VALUE_RADIO',
+    SET_EDIT_TODO = 'SET_EDIT_TODO',
 }
 
 export type TOpenModel = {
@@ -29,4 +33,14 @@ export type TChangeValueRadio = {
     payload: number;
 };
 
-export type TRageAction = TOpenModel | TCloseModel | TChangeTodoTextInput | TChangeValueRadio;
+export type TSetEditTodo = {
+    type: pageEnumAction.SET_EDIT_TODO;
+    payload: Todo | null;
+};
+
+export type TRageAction =
+    | TOpenModel
+    | TCloseModel
+    | TChangeTodoTextInput
+    | TChangeValueRadio
+    | TSetEditTodo;

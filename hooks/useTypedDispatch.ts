@@ -7,12 +7,14 @@ import {
     deleteList,
     createdTodo,
     deleteTodo,
+    editTodo,
 } from '../store/reducers/todoReducer';
 import {
     openModel,
     closeModel,
     changeTodoTextInput,
     changeValueRadio,
+    setEditTodo,
 } from '../store/reducers/PageReducer';
 
 const actionCreater = {
@@ -25,6 +27,8 @@ const actionCreater = {
     changeValueRadio,
     createdTodo,
     deleteTodo,
+    setEditTodo,
+    editTodo,
 };
 
 export const useTypeDispatch = () => {

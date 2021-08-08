@@ -1,13 +1,34 @@
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import { Colors, RadioButton } from 'react-native-paper';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import { useTypedSelector } from '../hooks/useTypedSelector';
+import { RootStackParamList } from '../Navigate';
 
-const EditorTodo: React.FC = () => {
+type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'EditorTodo'>;
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'EditorTodo'>;
+
+type Props = {
+    navigation: ProfileScreenNavigationProp;
+    route: ProfileScreenRouteProp;
+};
+
+const EditorTodo: React.FC<Props> = ({ route }) => {
     const { todoTextInput, valueRaduo } = useTypedSelector((state) => state.page);
-    const { changeTodoTextInput, changeValueRadio } = useTypeDispatch();
+    const { changeTodoTextInput, changeValueRadio, setEditTodo } = useTypeDispatch();
     const categores = useTypedSelector((state) => state.todo.state);
+
+    React.useEffect(() => {
+        if (route.params) {
+            changeTodoTextInput(route.params.todo?.text!);
+            setEditTodo(route.params.todo!);
+            changeValueRadio(route.params.todo?.list_id!);
+        } else {
+            changeValueRadio(categores[0].id);
+        }
+    }, []);
 
     return (
         <View>

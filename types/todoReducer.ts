@@ -28,6 +28,7 @@ export enum TodoEnumAction {
     DELETE_LIST = 'DELETE_LIST',
     CREATE_TODO = 'CREATE_TODO',
     DELETE_TODO = 'DELETE_TODO',
+    EDIT_TODO = 'EDIT_TODO',
 }
 
 export type TSetTodo = {
@@ -58,4 +59,18 @@ export type TDeleteTodo = {
     };
 };
 
-export type TRegisterAction = TSetTodo | TCreateList | TDeleteList | TCreatedTodo | TDeleteTodo;
+export type TEditTodo = {
+    type: TodoEnumAction.EDIT_TODO;
+    payload: {
+        todo: Todo;
+        newText: string;
+    };
+};
+
+export type TRegisterAction =
+    | TSetTodo
+    | TCreateList
+    | TDeleteList
+    | TCreatedTodo
+    | TDeleteTodo
+    | TEditTodo;

@@ -11,14 +11,19 @@ import { Todo } from './types/todoReducer';
 
 export type RootStackParamList = {
     Main: undefined;
-    EditorTodo: undefined;
+    EditorTodo?: { todo?: Todo };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const Navigate = () => {
-    const { todoTextInput, valueRaduo } = useTypedSelector((state) => state.page);
-    const { openModel, changeTodoTextInput, createdTodo } = useTypeDispatch();
+    const { todoTextInput, valueRaduo, editTodo } = useTypedSelector((state) => state.page);
+    const {
+        openModel,
+        changeTodoTextInput,
+        createdTodo,
+        editTodo: editotTodoList,
+    } = useTypeDispatch();
 
     const createdNewTodo = async () => {
         if (todoTextInput.length === 0) return;
@@ -33,6 +38,25 @@ const Navigate = () => {
         const date: Todo = await response.json();
         changeTodoTextInput('');
         createdTodo(date);
+    };
+
+    const editorTodo = async () => {
+        if (todoTextInput.length === 0) return;
+        const uri = API_URL + `/list/${valueRaduo}/todo/${editTodo?.id}`;
+        const response = await fetch(uri, {
+            method: 'PATCH ',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: todoTextInput }),
+        });
+        const date: Todo = await response.json();
+        changeTodoTextInput('');
+        editotTodoList({ newText: todoTextInput, todo: editTodo! });
+    };
+
+    const onPressButton = () => {
+        return editTodo !== null ? editorTodo() : createdNewTodo();
     };
 
     return (
@@ -53,7 +77,7 @@ const Navigate = () => {
                         title: '',
                         headerRight: () => (
                             <IconButton
-                                onPress={createdNewTodo}
+                                onPress={onPressButton}
                                 icon="check"
                                 color={Colors.blue500}
                             />

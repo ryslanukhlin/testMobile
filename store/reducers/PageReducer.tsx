@@ -6,11 +6,14 @@ import {
     todoState,
     TOpenModel,
     TRageAction,
+    TSetEditTodo,
 } from '../../types/pageReducer';
+import { Todo } from '../../types/todoReducer';
 
 const defaultState: todoState = {
     modalVisibale: false,
     todoTextInput: '',
+    editTodo: null,
 };
 
 export const pageReducer = (state = defaultState, action: TRageAction): todoState => {
@@ -23,6 +26,8 @@ export const pageReducer = (state = defaultState, action: TRageAction): todoStat
             return { ...state, todoTextInput: action.payload };
         case pageEnumAction.CHANGE_VALUE_RADIO:
             return { ...state, valueRaduo: action.payload };
+        case pageEnumAction.SET_EDIT_TODO:
+            return { ...state, editTodo: action.payload };
         default:
             return state;
     }
@@ -43,5 +48,10 @@ export const changeTodoTextInput = (payload: string): TChangeTodoTextInput => ({
 
 export const changeValueRadio = (payload: number): TChangeValueRadio => ({
     type: pageEnumAction.CHANGE_VALUE_RADIO,
+    payload,
+});
+
+export const setEditTodo = (payload: Todo | null): TSetEditTodo => ({
+    type: pageEnumAction.SET_EDIT_TODO,
     payload,
 });
