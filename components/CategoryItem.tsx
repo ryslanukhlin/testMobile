@@ -7,6 +7,8 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../Navigate';
 import { Todo } from '../types/todoReducer';
+import { useTypeDispatch } from '../hooks/useTypedDispatch';
+import { API_URL } from 'react-native-dotenv';
 
 interface props {
     category: StateModel;
@@ -21,6 +23,14 @@ const CategoryItem: React.FC<props> = ({ category }) => {
 
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
+    const { deleteTodo } = useTypeDispatch();
+
+    const deleteListItem = async (payload: { todoId: number; listId: number }) => {
+        const uri = API_URL + `/list/${payload.listId}/todo/${payload.todoId}`;
+        await fetch(uri, { method: 'DELETE' });
+        deleteTodo(payload);
+    };
+
     const leftSwipe = () => {
         return (
             <View style={styles.editingSwiper}>
@@ -33,14 +43,14 @@ const CategoryItem: React.FC<props> = ({ category }) => {
         );
     };
 
-    const rightSwipe = () => {
+    const rightSwipe = (todo: Todo) => {
         return (
             <View style={styles.deleteSwipe}>
                 <IconButton
                     icon="trash-can-outline"
                     color={Colors.red500}
                     size={22}
-                    onPress={() => console.log('Pressed')}
+                    onPress={deleteListItem.bind(null, { todoId: todo.id, listId: todo.list_id })}
                 />
             </View>
         );
@@ -48,13 +58,13 @@ const CategoryItem: React.FC<props> = ({ category }) => {
 
     return (
         <List.Section title={category.title}>
-            {category.todos ? (
+            {category.todos && category.todos.length !== 0 ? (
                 <>
                     {category.todos.map((todo) =>
                         !todo.checked ? (
                             <Swipeable
                                 key={todo.id}
-                                renderRightActions={rightSwipe}
+                                renderRightActions={rightSwipe.bind(null, todo)}
                                 renderLeftActions={leftSwipe}>
                                 <List.Item
                                     title={todo.text}
@@ -75,7 +85,7 @@ const CategoryItem: React.FC<props> = ({ category }) => {
                         ? completedTodos?.map((completedTodo) => (
                               <Swipeable
                                   key={completedTodo.id}
-                                  renderRightActions={rightSwipe}
+                                  renderRightActions={rightSwipe.bind(null, completedTodo)}
                                   renderLeftActions={leftSwipe}>
                                   <List.Item
                                       title={

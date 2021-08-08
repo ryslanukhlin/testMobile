@@ -5,6 +5,9 @@ import { IconButton, Colors } from 'react-native-paper';
 import Main from './pages/Main';
 import { useTypeDispatch } from './hooks/useTypedDispatch';
 import EditorTodo from './pages/EditorTodo';
+import { useTypedSelector } from './hooks/useTypedSelector';
+import { API_URL } from 'react-native-dotenv';
+import { Todo } from './types/todoReducer';
 
 export type RootStackParamList = {
     Main: undefined;
@@ -14,7 +17,23 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const Navigate = () => {
-    const { openModel } = useTypeDispatch();
+    const { todoTextInput, valueRaduo } = useTypedSelector((state) => state.page);
+    const { openModel, changeTodoTextInput, createdTodo } = useTypeDispatch();
+
+    const createdNewTodo = async () => {
+        if (todoTextInput.length === 0) return;
+        const uri = API_URL + `/list/${valueRaduo}/todo`;
+        const response = await fetch(uri, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: todoTextInput }),
+        });
+        const date: Todo = await response.json();
+        changeTodoTextInput('');
+        createdTodo(date);
+    };
 
     return (
         <NavigationContainer>
@@ -32,7 +51,13 @@ const Navigate = () => {
                     component={EditorTodo}
                     options={{
                         title: '',
-                        headerRight: () => <IconButton icon="check" color={Colors.blue500} />,
+                        headerRight: () => (
+                            <IconButton
+                                onPress={createdNewTodo}
+                                icon="check"
+                                color={Colors.blue500}
+                            />
+                        ),
                     }}
                 />
             </Stack.Navigator>

@@ -1,8 +1,19 @@
 import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { setTodos, createList, deleteList } from '../store/reducers/todoReducer';
-import { openModel, closeModel } from '../store/reducers/PageReducer';
+import {
+    setTodos,
+    createList,
+    deleteList,
+    createdTodo,
+    deleteTodo,
+} from '../store/reducers/todoReducer';
+import {
+    openModel,
+    closeModel,
+    changeTodoTextInput,
+    changeValueRadio,
+} from '../store/reducers/PageReducer';
 
 const actionCreater = {
     setTodos,
@@ -10,6 +21,10 @@ const actionCreater = {
     closeModel,
     createList,
     deleteList,
+    changeTodoTextInput,
+    changeValueRadio,
+    createdTodo,
+    deleteTodo,
 };
 
 export const useTypeDispatch = () => {

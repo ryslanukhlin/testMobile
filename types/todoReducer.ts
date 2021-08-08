@@ -26,6 +26,8 @@ export enum TodoEnumAction {
     SET_TODOS = 'SET_TODOS',
     CREATE_LIST = 'CREATE_LIST',
     DELETE_LIST = 'DELETE_LIST',
+    CREATE_TODO = 'CREATE_TODO',
+    DELETE_TODO = 'DELETE_TODO',
 }
 
 export type TSetTodo = {
@@ -43,4 +45,17 @@ export type TDeleteList = {
     payload: number;
 };
 
-export type TRegisterAction = TSetTodo | TCreateList | TDeleteList;
+export type TCreatedTodo = {
+    type: TodoEnumAction.CREATE_TODO;
+    payload: Todo;
+};
+
+export type TDeleteTodo = {
+    type: TodoEnumAction.DELETE_TODO;
+    payload: {
+        listId: number;
+        todoId: number;
+    };
+};
+
+export type TRegisterAction = TSetTodo | TCreateList | TDeleteList | TCreatedTodo | TDeleteTodo;
