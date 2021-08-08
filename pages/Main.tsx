@@ -33,12 +33,7 @@ const Main: React.FC<Props> = ({ navigation }) => {
 
     return (
         <>
-            <FAB
-                style={styles.fab}
-                small
-                icon="plus"
-                onPress={() => navigation.navigate('EditorTodo')}
-            />
+            <FAB style={styles.fab} icon="plus" onPress={() => navigation.navigate('EditorTodo')} />
             <Category />
             <ModalCustom />
             <StatusBar style="auto" />

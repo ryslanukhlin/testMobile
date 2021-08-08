@@ -8,6 +8,7 @@ import {
     createdTodo,
     deleteTodo,
     editTodo,
+    createComplitedTodo,
 } from '../store/reducers/todoReducer';
 import {
     openModel,
@@ -29,6 +30,7 @@ const actionCreater = {
     deleteTodo,
     setEditTodo,
     editTodo,
+    createComplitedTodo,
 };
 
 export const useTypeDispatch = () => {

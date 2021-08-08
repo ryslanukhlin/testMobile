@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors, List, IconButton } from 'react-native-paper';
+import { Colors, List, IconButton, TouchableRipple } from 'react-native-paper';
 import { StateModel } from '../model/stateModel';
 import Accordion from './Accordion';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -23,7 +23,7 @@ const CategoryItem: React.FC<props> = ({ category }) => {
 
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-    const { deleteTodo } = useTypeDispatch();
+    const { deleteTodo, createComplitedTodo } = useTypeDispatch();
 
     const deleteListItem = async (payload: { todoId: number; listId: number }) => {
         const uri = API_URL + `/list/${payload.listId}/todo/${payload.todoId}`;
@@ -33,27 +33,18 @@ const CategoryItem: React.FC<props> = ({ category }) => {
 
     const editListItem = (todo: Todo) => navigation.navigate('EditorTodo', { todo });
 
-    const leftSwipe = (todo: Todo) => {
+    const leftSwipe = () => {
         return (
             <View style={styles.editingSwiper}>
-                <IconButton
-                    icon="pencil-outline"
-                    size={22}
-                    onPress={editListItem.bind(null, todo)}
-                />
+                <List.Icon icon="pencil-outline" />
             </View>
         );
     };
 
-    const rightSwipe = (todo: Todo) => {
+    const rightSwipe = () => {
         return (
             <View style={styles.deleteSwipe}>
-                <IconButton
-                    icon="trash-can-outline"
-                    color={Colors.red500}
-                    size={22}
-                    onPress={deleteListItem.bind(null, { todoId: todo.id, listId: todo.list_id })}
-                />
+                <List.Icon icon="trash-can-outline" color={Colors.red500} />
             </View>
         );
     };
@@ -66,17 +57,28 @@ const CategoryItem: React.FC<props> = ({ category }) => {
                         !todo.checked ? (
                             <Swipeable
                                 key={todo.id}
+                                onSwipeableRightOpen={deleteListItem.bind(null, {
+                                    todoId: todo.id,
+                                    listId: todo.list_id,
+                                })}
+                                onSwipeableLeftOpen={editListItem.bind(null, todo)}
                                 renderRightActions={rightSwipe.bind(null, todo)}
                                 renderLeftActions={leftSwipe.bind(null, todo)}>
-                                <List.Item
-                                    title={todo.text}
-                                    left={(props) => (
-                                        <List.Icon
-                                            {...props}
-                                            icon="checkbox-blank-circle-outline"
-                                        />
-                                    )}
-                                />
+                                <TouchableRipple
+                                    onPress={createComplitedTodo.bind(null, {
+                                        todoId: todo.id,
+                                        listId: todo.list_id,
+                                    })}>
+                                    <List.Item
+                                        title={todo.text}
+                                        left={(props) => (
+                                            <List.Icon
+                                                {...props}
+                                                icon="checkbox-blank-circle-outline"
+                                            />
+                                        )}
+                                    />
+                                </TouchableRipple>
                             </Swipeable>
                         ) : null,
                     )}
@@ -87,6 +89,11 @@ const CategoryItem: React.FC<props> = ({ category }) => {
                         ? completedTodos?.map((completedTodo) => (
                               <Swipeable
                                   key={completedTodo.id}
+                                  onSwipeableRightOpen={deleteListItem.bind(null, {
+                                      todoId: completedTodo.id,
+                                      listId: completedTodo.list_id,
+                                  })}
+                                  onSwipeableLeftOpen={editListItem.bind(null, completedTodo)}
                                   renderRightActions={rightSwipe.bind(null, completedTodo)}
                                   renderLeftActions={leftSwipe.bind(null, completedTodo)}>
                                   <List.Item

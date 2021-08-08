@@ -10,6 +10,7 @@ import {
     Todo,
     TDeleteTodo,
     TEditTodo,
+    TComplitedTodo,
 } from '../../types/todoReducer';
 
 const defaultState: todoState = {
@@ -31,6 +32,10 @@ export const todoReducer = (state = defaultState, action: TRegisterAction): todo
                 );
 
                 const list = state.state[indexList];
+
+                if (list.todos === undefined) {
+                    list.todos = [];
+                }
 
                 const updateList = {
                     ...list,
@@ -88,6 +93,27 @@ export const todoReducer = (state = defaultState, action: TRegisterAction): todo
                     ],
                 };
             })();
+        case TodoEnumAction.COMPLITED_TODO:
+            return (() => {
+                const indexList = state.state.findIndex(
+                    (list) => list.id === action.payload.listId,
+                );
+
+                const list = state.state[indexList];
+                list.todos!.find((todo) => todo.id === action.payload.todoId)!.checked = true;
+
+                const updateList = {
+                    ...list,
+                };
+
+                return {
+                    state: [
+                        ...state.state.slice(0, indexList),
+                        updateList,
+                        ...state.state.slice(indexList + 1),
+                    ],
+                };
+            })();
         default:
             return state;
     }
@@ -120,5 +146,13 @@ export const deleteTodo = (payload: { listId: number; todoId: number }): TDelete
 
 export const editTodo = (payload: { todo: Todo; newText: string }): TEditTodo => ({
     type: TodoEnumAction.EDIT_TODO,
+    payload,
+});
+
+export const createComplitedTodo = (payload: {
+    listId: number;
+    todoId: number;
+}): TComplitedTodo => ({
+    type: TodoEnumAction.COMPLITED_TODO,
     payload,
 });

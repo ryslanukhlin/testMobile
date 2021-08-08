@@ -1,7 +1,7 @@
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { TextInput, StyleSheet } from 'react-native';
 import { Colors, RadioButton } from 'react-native-paper';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import { useTypedSelector } from '../hooks/useTypedSelector';
@@ -31,7 +31,7 @@ const EditorTodo: React.FC<Props> = ({ route }) => {
     }, []);
 
     return (
-        <View>
+        <>
             <TextInput
                 style={styles.input}
                 onChangeText={(text) => changeTodoTextInput(text)}
@@ -50,7 +50,7 @@ const EditorTodo: React.FC<Props> = ({ route }) => {
                     />
                 ))}
             </RadioButton.Group>
-        </View>
+        </>
     );
 };
 

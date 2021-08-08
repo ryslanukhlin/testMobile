@@ -78,11 +78,13 @@ const ModalCustom: React.FC = () => {
 const styles = StyleSheet.create({
     modal: {
         position: 'relative',
-        marginTop: 0,
+        marginTop: '-100%',
         zIndex: 2,
     },
     modalWrapper: {
         backgroundColor: 'white',
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
     },
     input: {
         width: '60%',
