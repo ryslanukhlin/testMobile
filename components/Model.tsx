@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet, TextInput, ListRenderItemInfo } from 'react-native';
 import { API_URL } from 'react-native-dotenv';
+import { FlatList } from 'react-native-gesture-handler';
 import { Colors, IconButton, List, Modal, Portal } from 'react-native-paper';
 
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
@@ -40,21 +41,26 @@ const ModalCustom: React.FC = () => {
             <Modal style={styles.modal} onDismiss={closeModel} visible={isOpen}>
                 <View style={styles.modalWrapper}>
                     <List.Section>
-                        {categories.map((category) => (
-                            <List.Item
-                                key={category.id}
-                                title={category.title}
-                                right={() => (
-                                    <IconButton
-                                        icon="trash-can-outline"
-                                        color={Colors.red500}
-                                        size={22}
-                                        onPress={deleteCategory.bind(null, category.id)}
-                                    />
-                                )}
-                            />
-                        ))}
+                        <FlatList
+                            style={{ marginBottom: 60 }}
+                            data={categories}
+                            keyExtractor={(item: StateModel) => String(item.id)}
+                            renderItem={(item: ListRenderItemInfo<StateModel>) => (
+                                <List.Item
+                                    title={item.item.title}
+                                    right={() => (
+                                        <IconButton
+                                            icon="trash-can-outline"
+                                            color={Colors.red500}
+                                            size={22}
+                                            onPress={deleteCategory.bind(null, item.item.id)}
+                                        />
+                                    )}
+                                />
+                            )}
+                        />
                         <List.Item
+                            style={styles.inputWrapper}
                             title=""
                             left={() => (
                                 <TextInput
@@ -80,11 +86,14 @@ const styles = StyleSheet.create({
         position: 'relative',
         marginTop: '-100%',
         zIndex: 2,
+        height: '100%',
+        paddingTop: '60%',
     },
     modalWrapper: {
         backgroundColor: 'white',
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
+        height: '100%',
     },
     input: {
         width: '60%',
@@ -92,6 +101,13 @@ const styles = StyleSheet.create({
         marginHorizontal: 2,
         fontSize: 16,
         paddingHorizontal: 5,
+        marginBottom: 60,
+    },
+    inputWrapper: {
+        backgroundColor: 'white',
+        position: 'absolute',
+        bottom: -55,
+        width: '100%',
     },
 });
 
