@@ -1,6 +1,6 @@
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React from 'react';
 import { IconButton, Colors, Title } from 'react-native-paper';
 import Main from './pages/Main';

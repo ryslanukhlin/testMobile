@@ -26,7 +26,7 @@ const EditorTodo: React.FC<Props> = ({ route }) => {
             setEditTodo(route.params.todo!);
             changeValueRadio(route.params.todo?.list_id!);
         } else {
-            changeValueRadio(categores[0].id);
+            if (categores.length !== 0) changeValueRadio(categores[0].id);
         }
     }, []);
 

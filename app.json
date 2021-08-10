@@ -27,6 +27,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "мое тестовое задание",
+    "githubUrl": "https://github.com/ryslanukhlin/testMobile"
   }
 }
