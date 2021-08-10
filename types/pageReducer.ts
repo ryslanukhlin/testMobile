@@ -3,8 +3,10 @@ import { Todo } from './todoReducer';
 export interface todoState {
     modalVisibale: boolean;
     todoTextInput: string;
-    valueRaduo?: number;
+    valueRaduo: number | null;
     editTodo: Todo | null;
+    errorSnackbarActuvete?: boolean;
+    errorSnackbarText?: string;
 }
 
 export enum pageEnumAction {
@@ -12,7 +14,9 @@ export enum pageEnumAction {
     CLOSE_MODEL = 'CLOSE_MODEL',
     CHANGE_TODO_TEXT_INPUT = 'CHANGE_TODO_TEXT_INPUT',
     CHANGE_VALUE_RADIO = 'CHANGE_VALUE_RADIO',
+    CLEAR_VALUE_RADIO = 'CLEAR_VALUE_RADIO',
     SET_EDIT_TODO = 'SET_EDIT_TODO',
+    SET_ERROR_SNACKBAR = 'SET_ERROR_SNACKBAR',
 }
 
 export type TOpenModel = {
@@ -33,9 +37,18 @@ export type TChangeValueRadio = {
     payload: number;
 };
 
+export type TClearValueRadio = {
+    type: pageEnumAction.CLEAR_VALUE_RADIO;
+};
+
 export type TSetEditTodo = {
     type: pageEnumAction.SET_EDIT_TODO;
     payload: Todo | null;
+};
+
+export type TSetErrorStackbar = {
+    type: pageEnumAction.SET_ERROR_SNACKBAR;
+    payload: { error: boolean; text?: string };
 };
 
 export type TRageAction =
@@ -43,4 +56,6 @@ export type TRageAction =
     | TCloseModel
     | TChangeTodoTextInput
     | TChangeValueRadio
-    | TSetEditTodo;
+    | TClearValueRadio
+    | TSetEditTodo
+    | TSetErrorStackbar;

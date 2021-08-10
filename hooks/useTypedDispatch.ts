@@ -16,6 +16,8 @@ import {
     changeTodoTextInput,
     changeValueRadio,
     setEditTodo,
+    setErrorStackbar,
+    clearValueRadio,
 } from '../store/reducers/PageReducer';
 
 const actionCreater = {
@@ -31,6 +33,8 @@ const actionCreater = {
     setEditTodo,
     editTodo,
     createComplitedTodo,
+    setErrorStackbar,
+    clearValueRadio,
 };
 
 export const useTypeDispatch = () => {

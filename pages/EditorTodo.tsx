@@ -2,7 +2,8 @@ import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
-import { Colors, RadioButton } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Colors, RadioButton, Snackbar } from 'react-native-paper';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { RootStackParamList } from '../Navigate';
@@ -16,18 +17,31 @@ type Props = {
 };
 
 const EditorTodo: React.FC<Props> = ({ route }) => {
-    const { todoTextInput, valueRaduo } = useTypedSelector((state) => state.page);
-    const { changeTodoTextInput, changeValueRadio, setEditTodo } = useTypeDispatch();
+    const { todoTextInput, valueRaduo, errorSnackbarText, errorSnackbarActuvete } =
+        useTypedSelector((state) => state.page);
+
+    const {
+        changeTodoTextInput,
+        changeValueRadio,
+        setEditTodo,
+        setErrorStackbar,
+        clearValueRadio,
+    } = useTypeDispatch();
+
     const categores = useTypedSelector((state) => state.todo.state);
+
+    const onDismissSnackBar = () => setErrorStackbar({ error: false });
 
     React.useEffect(() => {
         if (route.params) {
             changeTodoTextInput(route.params.todo?.text!);
             setEditTodo(route.params.todo!);
-            changeValueRadio(route.params.todo?.list_id!);
-        } else {
-            if (categores.length !== 0) changeValueRadio(categores[0].id);
         }
+        return () => {
+            clearValueRadio();
+            setErrorStackbar({ error: false });
+            changeTodoTextInput('');
+        };
     }, []);
 
     return (
@@ -38,18 +52,26 @@ const EditorTodo: React.FC<Props> = ({ route }) => {
                 defaultValue={todoTextInput}
                 placeholder="Название задачи"
             />
-            <RadioButton.Group
-                onValueChange={(value) => changeValueRadio(+value)}
-                value={String(valueRaduo)}>
-                {categores.map((category) => (
-                    <RadioButton.Item
-                        key={category.id}
-                        color={Colors.blue500}
-                        label={category.title}
-                        value={String(category.id)}
-                    />
-                ))}
-            </RadioButton.Group>
+            <ScrollView>
+                <RadioButton.Group
+                    onValueChange={(value) => changeValueRadio(+value)}
+                    value={String(valueRaduo)}>
+                    {categores.map((category) => (
+                        <RadioButton.Item
+                            key={category.id}
+                            color={Colors.blue500}
+                            label={category.title}
+                            value={String(category.id)}
+                        />
+                    ))}
+                </RadioButton.Group>
+            </ScrollView>
+            <Snackbar
+                style={styles.snackbar}
+                visible={errorSnackbarActuvete!}
+                onDismiss={onDismissSnackBar}>
+                {errorSnackbarText}
+            </Snackbar>
         </>
     );
 };
@@ -61,6 +83,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginTop: 15,
         fontSize: 20,
+    },
+    snackbar: {
+        backgroundColor: Colors.red500,
+        color: 'white',
     },
 });
 
