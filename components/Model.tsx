@@ -1,21 +1,23 @@
 import React from 'react';
 import { View, StyleSheet, TextInput, ListRenderItemInfo } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { Colors, IconButton, List, Modal, Portal } from 'react-native-paper';
+import { Colors, IconButton, List, Modal, Portal, Snackbar } from 'react-native-paper';
 import API from '../Api';
+import { Dimensions } from 'react-native';
 
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { StateModel } from '../model/stateModel';
 
 const ModalCustom: React.FC = () => {
+    const [visible, setVisible] = React.useState(false);
     const [text, setText] = React.useState<string>('');
     const isOpen = useTypedSelector((state) => state.page.modalVisibale);
     const categories = useTypedSelector((state) => state.todo.state);
     const { closeModel, deleteList, createList } = useTypeDispatch();
 
     const createCategory = async (): Promise<void | undefined> => {
-        if (text.length === 0) return;
+        if (!text.trim().length) return setVisible(true);
         const date = await API.createCategoryRequest(text);
         setText('');
         createList(date);
@@ -26,8 +28,13 @@ const ModalCustom: React.FC = () => {
         deleteList(id);
     };
 
+    const onDismissSnackBar = () => setVisible(false);
+
     return (
         <Portal>
+            <Snackbar style={styles.snackbar} visible={visible} onDismiss={onDismissSnackBar}>
+                Пустой поле
+            </Snackbar>
             <Modal style={styles.modal} onDismiss={closeModel} visible={isOpen}>
                 <View style={styles.modalWrapper}>
                     <List.Section>
@@ -71,6 +78,8 @@ const ModalCustom: React.FC = () => {
     );
 };
 
+const screenHeight = Dimensions.get('screen').height;
+
 const styles = StyleSheet.create({
     modal: {
         position: 'relative',
@@ -98,6 +107,11 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: -55,
         width: '100%',
+    },
+    snackbar: {
+        backgroundColor: Colors.red500,
+        color: 'white',
+        bottom: screenHeight - 180,
     },
 });
 

@@ -1,15 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Colors, List, TouchableRipple } from 'react-native-paper';
+import { ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
+import { Colors, IconButton, List, TouchableRipple } from 'react-native-paper';
 import { StateModel } from '../model/stateModel';
 import Accordion from './Accordion';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../Navigate';
 import { Todo } from '../types/todoReducer';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import API from '../Api';
-import { useTypedSelector } from '../hooks/useTypedSelector';
+import { RowMap, SwipeListView } from 'react-native-swipe-list-view';
 
 interface props {
     category: StateModel;
@@ -38,40 +37,43 @@ const CategoryItem: React.FC<props> = ({ category }) => {
         await API.editorTodoRequest(todo.list_id, todo, todo.text, true);
     };
 
-    const leftSwipe = () => {
-        return (
-            <View style={styles.editingSwiper}>
-                <List.Icon icon="pencil-outline" />
-            </View>
-        );
-    };
-
-    const rightSwipe = () => {
-        return (
-            <View style={styles.deleteSwipe}>
-                <List.Icon icon="trash-can-outline" color={Colors.red500} />
-            </View>
-        );
-    };
+    const renderHiddenItem = (data: ListRenderItemInfo<Todo>, rowMap: RowMap<Todo>) => (
+        <View style={styles.rowBack}>
+            <IconButton
+                size={22}
+                style={styles.editingSwiper}
+                icon="pencil-outline"
+                onPress={editListItem.bind(null, data.item)}
+            />
+            <IconButton
+                size={22}
+                style={styles.deleteSwipe}
+                icon="trash-can-outline"
+                color={Colors.red500}
+                onPress={deleteListItem.bind(null, {
+                    todoId: data.item.id,
+                    listId: data.item.list_id,
+                })}
+            />
+        </View>
+    );
 
     return (
         <List.Section title={category.title}>
             {category.todos && category.todos.length !== 0 ? (
                 <>
-                    {category.todos.map((todo) =>
-                        !todo.checked ? (
-                            <Swipeable
-                                key={todo.id}
-                                onSwipeableRightOpen={deleteListItem.bind(null, {
-                                    todoId: todo.id,
-                                    listId: todo.list_id,
-                                })}
-                                onSwipeableLeftOpen={editListItem.bind(null, todo)}
-                                renderRightActions={rightSwipe.bind(null, todo)}
-                                renderLeftActions={leftSwipe.bind(null, todo)}>
-                                <TouchableRipple onPress={compliteTodo.bind(null, todo)}>
+                    <SwipeListView
+                        data={category.todos}
+                        listKey={String('nocompluted' + category.id)}
+                        keyExtractor={(item, index) => item + index.toString()}
+                        renderItem={(todo) => {
+                            if (todo.item.checked) return <></>;
+                            return (
+                                <TouchableRipple
+                                    style={styles.rowFront}
+                                    onPress={compliteTodo.bind(null, todo.item)}>
                                     <List.Item
-                                        title={todo.text}
+                                        title={todo.item.text}
                                         left={(props) => (
                                             <List.Icon
                                                 {...props}
@@ -80,38 +82,42 @@ const CategoryItem: React.FC<props> = ({ category }) => {
                                         )}
                                     />
                                 </TouchableRipple>
-                            </Swipeable>
-                        ) : null,
-                    )}
+                            );
+                        }}
+                        renderHiddenItem={renderHiddenItem}
+                        leftOpenValue={75}
+                        rightOpenValue={-75}
+                    />
                     {completedTodos!.length !== 0 ? (
                         <Accordion enabled={enabled} setEnabled={setEnabled} />
                     ) : null}
-                    {enabled
-                        ? completedTodos?.map((completedTodo) => (
-                              <Swipeable
-                                  key={completedTodo.id}
-                                  onSwipeableRightOpen={deleteListItem.bind(null, {
-                                      todoId: completedTodo.id,
-                                      listId: completedTodo.list_id,
-                                  })}
-                                  onSwipeableLeftOpen={editListItem.bind(null, completedTodo)}
-                                  renderRightActions={rightSwipe.bind(null, completedTodo)}
-                                  renderLeftActions={leftSwipe.bind(null, completedTodo)}>
-                                  <List.Item
-                                      title={
-                                          <Text style={styles.pomplited}>{completedTodo.text}</Text>
-                                      }
-                                      left={(props) => (
-                                          <List.Icon
-                                              {...props}
-                                              color={Colors.blue500}
-                                              icon="check"
-                                          />
-                                      )}
-                                  />
-                              </Swipeable>
-                          ))
-                        : null}
+                    {enabled ? (
+                        <SwipeListView
+                            data={completedTodos}
+                            listKey={String('compluted' + category.id)}
+                            keyExtractor={(item, index) => item + index.toString()}
+                            renderItem={(todo) => {
+                                return (
+                                    <List.Item
+                                        style={styles.rowFront}
+                                        title={
+                                            <Text style={styles.pomplited}>{todo.item.text}</Text>
+                                        }
+                                        left={(props) => (
+                                            <List.Icon
+                                                {...props}
+                                                color={Colors.blue500}
+                                                icon="check"
+                                            />
+                                        )}
+                                    />
+                                );
+                            }}
+                            renderHiddenItem={renderHiddenItem}
+                            leftOpenValue={75}
+                            rightOpenValue={-75}
+                        />
+                    ) : null}
                 </>
             ) : (
                 <Text style={styles.emptyTitleList}>Список Пуст</Text>
@@ -126,24 +132,35 @@ const styles = StyleSheet.create({
         textDecorationLine: 'line-through',
     },
     deleteSwipe: {
+        backgroundColor: 'white',
         borderLeftColor: 'lightgrey',
-        borderLeftWidth: 1,
-        width: 80,
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderLeftWidth: 2,
+        width: 55,
+        borderRadius: 0,
+        height: '100%',
     },
     editingSwiper: {
+        backgroundColor: 'white',
         borderRightColor: 'lightgrey',
-        borderRightWidth: 1,
-        width: 80,
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderRightWidth: 2,
+        width: 55,
+        borderRadius: 0,
+        height: '100%',
     },
     emptyTitleList: {
         fontSize: 16,
         marginLeft: 30,
         paddingVertical: 5,
         color: Colors.red500,
+    },
+    rowFront: {
+        backgroundColor: 'white',
+    },
+    rowBack: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
 });
 

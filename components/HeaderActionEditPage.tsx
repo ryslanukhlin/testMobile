@@ -19,23 +19,21 @@ export const HeaderActionEditPage: React.FC = () => {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     const createdNewTodo = async () => {
-        if (todoTextInput.length === 0) return;
         const date = await API.createdNewTodoRequest(valueRaduo!, todoTextInput);
-        changeTodoTextInput('');
         createdTodo(date);
+        changeTodoTextInput('');
     };
 
     const editorTodo = async () => {
-        if (todoTextInput.length === 0) return;
+        editotTodoList({ newText: todoTextInput, todo: editTodo!, newIdCategory: valueRaduo! });
         await API.editorTodoRequest(valueRaduo!, editTodo!, todoTextInput);
         changeTodoTextInput('');
-        editotTodoList({ newText: todoTextInput, todo: editTodo!, newIdCategory: valueRaduo! });
     };
 
     const onPressButton = () => {
         if (categories.length === 0)
             return setErrorStackbar({ error: true, text: 'Сначало нужно создать категорию' });
-        if (!/^\S+$/.test(todoTextInput))
+        if (!todoTextInput.trim().length)
             return setErrorStackbar({ error: true, text: 'Пустое значение поля' });
         if (!valueRaduo) return setErrorStackbar({ error: true, text: 'Не выбрана категория' });
         editTodo !== null ? editorTodo() : createdNewTodo();
