@@ -23,9 +23,14 @@ class API {
         return response.data;
     }
 
-    static async editorTodoRequest(valueRaduo: number, editTodo: Todo, todoTextInput: string) {
+    static async editorTodoRequest(
+        valueRaduo: number,
+        editTodo: Todo,
+        todoTextInput: string,
+        checked = false,
+    ) {
         const uri = API_URL + `/list/${valueRaduo}/todo/${editTodo?.id}`;
-        await axios.patch(uri, { text: todoTextInput });
+        await axios.patch(uri, { text: todoTextInput, checked });
     }
 
     static async createCategoryRequest(text: string) {

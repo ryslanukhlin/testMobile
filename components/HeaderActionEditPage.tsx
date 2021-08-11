@@ -35,7 +35,7 @@ export const HeaderActionEditPage: React.FC = () => {
     const onPressButton = () => {
         if (categories.length === 0)
             return setErrorStackbar({ error: true, text: 'Сначало нужно создать категорию' });
-        if (todoTextInput.length === 0)
+        if (!/^\S+$/.test(todoTextInput))
             return setErrorStackbar({ error: true, text: 'Пустое значение поля' });
         if (!valueRaduo) return setErrorStackbar({ error: true, text: 'Не выбрана категория' });
         editTodo !== null ? editorTodo() : createdNewTodo();

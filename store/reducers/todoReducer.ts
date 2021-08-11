@@ -27,48 +27,30 @@ export const todoReducer = (state = defaultState, action: TRegisterAction): todo
             return { state: state.state.filter((list) => list.id !== action.payload) };
         case TodoEnumAction.CREATE_TODO:
             return (() => {
-                const indexList = state.state.findIndex(
-                    (list) => list.id === action.payload.list_id,
-                );
-
-                const list = state.state[indexList];
-
-                if (list.todos === undefined) {
-                    list.todos = [];
-                }
-
-                const updateList = {
-                    ...list,
-                    todos: [...list.todos!, action.payload],
-                };
+                const copyState = state.state.map((category) => {
+                    if (category.id === action.payload.list_id)
+                        category.todos?.push(action.payload);
+                    return category;
+                });
 
                 return {
-                    state: [
-                        ...state.state.slice(0, indexList),
-                        updateList,
-                        ...state.state.slice(indexList + 1),
-                    ],
+                    state: copyState,
                 };
             })();
         case TodoEnumAction.DELETE_TODO:
             return (() => {
-                const indexList = state.state.findIndex(
-                    (list) => list.id === action.payload.listId,
-                );
-
-                const list = state.state[indexList];
-
-                const updateList = {
-                    ...list,
-                    todos: list.todos?.filter((todo) => todo.id !== action.payload.todoId),
-                };
+                const copyState = state.state.map((category) => {
+                    if (category.id === action.payload.listId) {
+                        const todos = category.todos?.filter(
+                            (todo) => todo.id !== action.payload.todoId,
+                        );
+                        category.todos = todos;
+                    }
+                    return category;
+                });
 
                 return {
-                    state: [
-                        ...state.state.slice(0, indexList),
-                        updateList,
-                        ...state.state.slice(indexList + 1),
-                    ],
+                    state: copyState,
                 };
             })();
         case TodoEnumAction.EDIT_TODO:
@@ -94,23 +76,19 @@ export const todoReducer = (state = defaultState, action: TRegisterAction): todo
             })();
         case TodoEnumAction.COMPLITED_TODO:
             return (() => {
-                const indexList = state.state.findIndex(
-                    (list) => list.id === action.payload.listId,
-                );
-
-                const list = state.state[indexList];
-                list.todos!.find((todo) => todo.id === action.payload.todoId)!.checked = true;
-
-                const updateList = {
-                    ...list,
-                };
+                const copyState = state.state.map((category) => {
+                    if (category.id === action.payload.listId) {
+                        const todos = category.todos?.map((todo) => {
+                            if (todo.id === action.payload.todoId) todo.checked = true;
+                            return todo;
+                        });
+                        category.todos = todos;
+                    }
+                    return category;
+                });
 
                 return {
-                    state: [
-                        ...state.state.slice(0, indexList),
-                        updateList,
-                        ...state.state.slice(indexList + 1),
-                    ],
+                    state: copyState,
                 };
             })();
         default:

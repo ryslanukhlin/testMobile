@@ -41,6 +41,7 @@ const EditorTodo: React.FC<Props> = ({ route }) => {
             clearValueRadio();
             setErrorStackbar({ error: false });
             changeTodoTextInput('');
+            setEditTodo(null);
         };
     }, []);
 

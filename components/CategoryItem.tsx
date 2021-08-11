@@ -9,6 +9,7 @@ import { RootStackParamList } from '../Navigate';
 import { Todo } from '../types/todoReducer';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import API from '../Api';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 
 interface props {
     category: StateModel;
@@ -31,6 +32,11 @@ const CategoryItem: React.FC<props> = ({ category }) => {
     };
 
     const editListItem = (todo: Todo) => navigation.navigate('EditorTodo', { todo });
+
+    const compliteTodo = async (todo: Todo) => {
+        createComplitedTodo({ todoId: todo.id, listId: todo.list_id });
+        await API.editorTodoRequest(todo.list_id, todo, todo.text, true);
+    };
 
     const leftSwipe = () => {
         return (
@@ -63,11 +69,7 @@ const CategoryItem: React.FC<props> = ({ category }) => {
                                 onSwipeableLeftOpen={editListItem.bind(null, todo)}
                                 renderRightActions={rightSwipe.bind(null, todo)}
                                 renderLeftActions={leftSwipe.bind(null, todo)}>
-                                <TouchableRipple
-                                    onPress={createComplitedTodo.bind(null, {
-                                        todoId: todo.id,
-                                        listId: todo.list_id,
-                                    })}>
+                                <TouchableRipple onPress={compliteTodo.bind(null, todo)}>
                                     <List.Item
                                         title={todo.text}
                                         left={(props) => (
