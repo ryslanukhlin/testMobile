@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors, List, IconButton, TouchableRipple } from 'react-native-paper';
+import { Colors, List, TouchableRipple } from 'react-native-paper';
 import { StateModel } from '../model/stateModel';
 import Accordion from './Accordion';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -8,7 +8,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../Navigate';
 import { Todo } from '../types/todoReducer';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
-import { API_URL } from 'react-native-dotenv';
+import API from '../Api';
 
 interface props {
     category: StateModel;
@@ -26,8 +26,7 @@ const CategoryItem: React.FC<props> = ({ category }) => {
     const { deleteTodo, createComplitedTodo } = useTypeDispatch();
 
     const deleteListItem = async (payload: { todoId: number; listId: number }) => {
-        const uri = API_URL + `/list/${payload.listId}/todo/${payload.todoId}`;
-        await fetch(uri, { method: 'DELETE' });
+        await API.deleteListItemRequest(payload);
         deleteTodo(payload);
     };
 

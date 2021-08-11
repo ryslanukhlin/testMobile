@@ -73,24 +73,23 @@ export const todoReducer = (state = defaultState, action: TRegisterAction): todo
             })();
         case TodoEnumAction.EDIT_TODO:
             return (() => {
-                const indexList = state.state.findIndex(
-                    (list) => list.id === action.payload.todo.list_id,
-                );
-
-                const list = state.state[indexList];
-                list.todos!.find((todo) => todo.id === action.payload.todo.id)!.text =
-                    action.payload.newText;
-
-                const updateList = {
-                    ...list,
-                };
-
+                const copyState = state.state.map((category) => {
+                    if (category.id === action.payload.todo.list_id) {
+                        const todos = category.todos?.filter(
+                            (todo) => todo.id !== action.payload.todo.id,
+                        );
+                        category.todos = todos;
+                    }
+                    if (category.id === action.payload.newIdCategory) {
+                        const todo = action.payload.todo;
+                        todo.text = action.payload.newText;
+                        todo.list_id = action.payload.newIdCategory;
+                        category.todos?.push(action.payload.todo);
+                    }
+                    return category;
+                });
                 return {
-                    state: [
-                        ...state.state.slice(0, indexList),
-                        updateList,
-                        ...state.state.slice(indexList + 1),
-                    ],
+                    state: copyState,
                 };
             })();
         case TodoEnumAction.COMPLITED_TODO:
@@ -144,7 +143,11 @@ export const deleteTodo = (payload: { listId: number; todoId: number }): TDelete
     payload,
 });
 
-export const editTodo = (payload: { todo: Todo; newText: string }): TEditTodo => ({
+export const editTodo = (payload: {
+    todo: Todo;
+    newText: string;
+    newIdCategory: number;
+}): TEditTodo => ({
     type: TodoEnumAction.EDIT_TODO,
     payload,
 });

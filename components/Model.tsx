@@ -1,15 +1,14 @@
 import React from 'react';
 import { View, StyleSheet, TextInput, ListRenderItemInfo } from 'react-native';
-import { API_URL } from 'react-native-dotenv';
 import { FlatList } from 'react-native-gesture-handler';
 import { Colors, IconButton, List, Modal, Portal } from 'react-native-paper';
+import API from '../Api';
 
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { StateModel } from '../model/stateModel';
 
 const ModalCustom: React.FC = () => {
-    const uri = API_URL + '/list';
     const [text, setText] = React.useState<string>('');
     const isOpen = useTypedSelector((state) => state.page.modalVisibale);
     const categories = useTypedSelector((state) => state.todo.state);
@@ -17,22 +16,13 @@ const ModalCustom: React.FC = () => {
 
     const createCategory = async (): Promise<void | undefined> => {
         if (text.length === 0) return;
-        const response = await fetch(uri, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ title: text }),
-        });
-        const date: StateModel = await response.json();
+        const date = await API.createCategoryRequest(text);
         setText('');
         createList(date);
     };
 
     const deleteCategory = async (id: number) => {
-        await fetch(uri + `/${id}`, {
-            method: 'DELETE',
-        });
+        await API.deleteCategoryRequest(id);
         deleteList(id);
     };
 
@@ -86,14 +76,14 @@ const styles = StyleSheet.create({
         position: 'relative',
         marginTop: '-100%',
         zIndex: 2,
-        height: '100%',
+        maxHeight: '100%',
         paddingTop: '60%',
     },
     modalWrapper: {
         backgroundColor: 'white',
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
-        height: '100%',
+        maxHeight: 400,
     },
     input: {
         width: '60%',

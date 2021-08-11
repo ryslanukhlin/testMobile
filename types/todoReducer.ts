@@ -65,6 +65,7 @@ export type TEditTodo = {
     payload: {
         todo: Todo;
         newText: string;
+        newIdCategory: number;
     };
 };
 

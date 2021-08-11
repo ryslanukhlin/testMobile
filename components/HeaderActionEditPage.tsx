@@ -1,11 +1,10 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { API_URL } from 'react-native-dotenv';
 import { Colors, IconButton } from 'react-native-paper';
+import API from '../Api';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { RootStackParamList } from '../Navigate';
-import { Todo } from '../types/todoReducer';
 
 export const HeaderActionEditPage: React.FC = () => {
     const { state: categories } = useTypedSelector((state) => state.todo);
@@ -21,31 +20,16 @@ export const HeaderActionEditPage: React.FC = () => {
 
     const createdNewTodo = async () => {
         if (todoTextInput.length === 0) return;
-        const uri = API_URL + `/list/${valueRaduo}/todo`;
-        const response = await fetch(uri, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ text: todoTextInput }),
-        });
-        const date: Todo = await response.json();
+        const date = await API.createdNewTodoRequest(valueRaduo!, todoTextInput);
         changeTodoTextInput('');
         createdTodo(date);
     };
 
     const editorTodo = async () => {
         if (todoTextInput.length === 0) return;
-        const uri = API_URL + `/list/${valueRaduo}/todo/${editTodo?.id}`;
-        await fetch(uri, {
-            method: 'PATCH ',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ text: todoTextInput }),
-        });
+        await API.editorTodoRequest(valueRaduo!, editTodo!, todoTextInput);
         changeTodoTextInput('');
-        editotTodoList({ newText: todoTextInput, todo: editTodo! });
+        editotTodoList({ newText: todoTextInput, todo: editTodo!, newIdCategory: valueRaduo! });
     };
 
     const onPressButton = () => {

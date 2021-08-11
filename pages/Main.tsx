@@ -1,16 +1,14 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { plainToClass } from 'class-transformer';
 import { StatusBar } from 'expo-status-bar';
-import { StateModel } from '../model/stateModel';
 import { useTypeDispatch } from '../hooks/useTypedDispatch';
+import { FAB, Colors } from 'react-native-paper';
+import { StackNavigationProp } from '@react-navigation/stack';
+import API from '../Api';
+
 import Category from '../components/Category';
 import ModalCustom from '../components/Model';
-
-import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../Navigate';
-import { API_URL } from 'react-native-dotenv';
-import { FAB, Colors } from 'react-native-paper';
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
 
@@ -21,13 +19,9 @@ type Props = {
 const Main: React.FC<Props> = ({ navigation }) => {
     const { setTodos } = useTypeDispatch();
 
-    React.useLayoutEffect(() => {
+    React.useEffect(() => {
         (async () => {
-            const uri = API_URL + '/list';
-            const response = await fetch(uri);
-            const date: StateModel[] = await response.json();
-            const stateModel = plainToClass(StateModel, date);
-            setTodos(stateModel);
+            setTodos(await API.getList());
         })();
     }, []);
 
